@@ -13,5 +13,11 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         //
+        // $statuses = ['Science Fiction', 'Mystery', 'Romance'];
+
+        // \App\Models\Category::factory(10)->create();
+        \App\Models\Category::create(['name' => 'Science Fiction']);
+        \App\Models\Category::create(['name' => 'Mystery']);
+        \App\Models\Category::create(['name' => 'Romance']);
     }
 }

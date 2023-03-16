@@ -16,8 +16,12 @@ class StatusFactory extends Factory
      */
     public function definition(): array
     {
+        $statuses = ['available', 'borrowed', 'processing'];
+        $randomIndex = rand(0, count($statuses) - 1);
+
         return [
-            //
+            'name' => $statuses[$randomIndex],
+            
         ];
     }
 }

@@ -13,5 +13,10 @@ class StatusSeeder extends Seeder
     public function run(): void
     {
         //
+        // ['available', 'borrowed', 'processing'];
+        // \App\Models\Status::factory(10)->create();
+        \App\Models\Status::create(['name' => 'available']);
+        \App\Models\Status::create(['name' => 'borrowed']);
+        \App\Models\Status::create(['name' => 'processing']);
     }
 }
