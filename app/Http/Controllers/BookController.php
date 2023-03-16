@@ -65,6 +65,32 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request, Book $book)
     {
         //
+        // if ($book->user_id != 1 && Auth::user()->role->name != "admin") {
+        //     return  response()->json(["error" => 'You Dont have permission to make action on it'], 404);
+        // }
+        if ($request->hasFile('image')) {
+            // delete old image
+            $oldImage = public_path('images/') . $book->image;
+            if (file_exists($oldImage)) {
+                unlink($oldImage);
+            }
+            // upload new image
+            $image = $request->file('image');
+            $imageName = time() . '-' . $image->getClientOriginalName();
+            $image->move(public_path('images/'), $imageName);
+            $book->image = $imageName;
+        }
+        $book->title = $request->title;
+        $book->author = $request->author;
+        $book->collection = $request->collection;
+        $book->isbn = $request->isbn;
+        $book->pagesNumber = $request->pagesNumber;
+        $book->emplacement = $request->emplacement;
+        $book->status_id = $request->status_id;
+        $book->category_id = $request->category_id;
+        $book->update();
+        
+        return new BookResource($book);
     }
 
     /**
