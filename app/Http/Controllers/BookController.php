@@ -53,6 +53,8 @@ class BookController extends Controller
     public function show(Book $book)
     {
         //
+        $book =  Book::with('category', 'status')->where('id', $book->id)->get();
+        return  new BookCollection($book);
     }
 
 
