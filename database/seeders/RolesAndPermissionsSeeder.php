@@ -19,15 +19,15 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => 'edit articles']);
+        Permission::create(['name' => 'list books']);
         Permission::create(['name' => 'delete articles']);
         
 
         // create roles and assign created permissions
 
         // this can be done as separate statements
-        $role = Role::create(['name' => 'writer']);
-        $role->givePermissionTo('edit articles');
+        $role = Role::create(['name' => 'member']);
+        $role->givePermissionTo('list books');
 
         
 
