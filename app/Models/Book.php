@@ -13,6 +13,7 @@ class Book extends Model
         'title',
         'author',
         'collection',
+        'image',
         'isbn',
         'pagesNumber',
         'emplacement',
