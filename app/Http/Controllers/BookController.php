@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Http\Resources\BookCollection;
+use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
@@ -14,16 +16,11 @@ class BookController extends Controller
     public function index()
     {
         //
-    }
+        $books =  Book::with('category', 'user',)->latest()->get();
+        return  new BookCollection($books);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -40,13 +37,7 @@ class BookController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Book $book)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
