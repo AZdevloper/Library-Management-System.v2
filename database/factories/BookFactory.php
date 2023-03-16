@@ -22,6 +22,7 @@ class BookFactory extends Factory
         return [
             //
             'title' => fake()->name(),
+            'image' => fake()->name(),
             'author' => fake()->name(),
             'collection' => fake()->name(),
             'isbn' => fake()->name(),

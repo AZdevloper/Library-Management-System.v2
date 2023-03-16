@@ -27,6 +27,24 @@ class BookController extends Controller
     public function store(StoreBookRequest $request)
     {
         //
+        $image = $request->file('image');
+        $image_name = time() . '.' . $image->getClientOriginalExtension();
+        $destinationPath = public_path('/images');
+        $image->move($destinationPath, $image_name);
+        $book = Book::create([
+            'title' => $request->title,
+            'author' => $request->author,
+            'collection' => $request->collection,
+            'isbn' => $request->isbn,
+            'image' => $image_name,
+            'pagesNumber' => $request->pagesNumber,
+            'emplacement' => $request->emplacement,
+            'user_id' => 1,// Auth::user()->id
+            'category_id' => $request->category_id,
+            'status_id' => $request->status_id,
+        ]);
+        
+        return new BookResource($book);
     }
 
     /**
