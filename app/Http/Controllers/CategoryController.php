@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryCollection;
+use App\Http\Resources\CategoryResource;
 
 class CategoryController extends Controller
 {
@@ -14,22 +16,28 @@ class CategoryController extends Controller
     public function index()
     {
         //
+
+        $categories =  Category::all();
+        return new CategoryCollection($categories);
+        // return new CategoryCollection($categories)  ;
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        //validation 
+
+        $category = Category::create([
+            'name' => $request->name,
+            
+        ]);
+        $category->save();
+        return new CategoryResource($category);
     }
 
     /**
@@ -38,15 +46,12 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         //
+        $categories =  Category::find($category->id);
+        return new CategoryResource($categories);
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -54,6 +59,9 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         //
+        $category->name = $request->name;
+        $category->update();
+        return new CategoryResource($category);
     }
 
     /**
@@ -62,5 +70,8 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+        $category->delete();
+        
+        return response()->json(["success"=>"deleted successfully"]);
     }
 }
