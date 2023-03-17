@@ -99,5 +99,11 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         //
+        // if ($book->user_id != 1 && Auth::user()->role->name != "admin") {
+
+        $book = Book::find($book->id);
+        $book->delete();
+        return  response()->json(['success' => 'book deleted successfully']);
+
     }
 }
