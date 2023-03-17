@@ -31,5 +31,9 @@ use App\Http\Controllers\CategoryController;
 //     Route::get('/email/verify/{id}/{hash}', 'verify')
 //     ->name('verification.verify');
 // });
-Route::apiResource('books', BookController::class);
+Route::controller(App\Http\Controllers\BookController::class)->group(function () {
+    Route::post('books', 'index');
+
+    });
+Route::apiResource('books', BookController::class)->middleware(['permission'=>'list books']);
 Route::apiResource('category', CategoryController::class);
