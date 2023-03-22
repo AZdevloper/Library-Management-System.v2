@@ -16,8 +16,8 @@ class BookController extends Controller
     public function index()
     {
         //
-        $books =  Book::with('category', 'user',)->latest()->get();
-        return  new BookCollection($books);
+        $books = Book::with('category', 'user', )->latest()->get();
+        return new BookCollection($books);
 
 
     }
@@ -39,22 +39,27 @@ class BookController extends Controller
             'image' => $image_name,
             'pagesNumber' => $request->pagesNumber,
             'emplacement' => $request->emplacement,
-            'user_id' => 1,// Auth::user()->id
+            'user_id' => 1, // Auth::user()->id
             'category_id' => $request->category_id,
             'status_id' => $request->status_id,
         ]);
-        
+
         return new BookResource($book);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show($bookId)
     {
         //
-        $book =  Book::with('category', 'status')->where('id', $book->id)->get();
-        return  new BookCollection($book);
+        $book = Book::with('category', 'status')->where('id', $bookId)->first();
+        if ($book) {
+            return new BookResource($book);
+        }else {
+            return response()->json("book not found");
+        }
+
     }
 
 
@@ -89,7 +94,7 @@ class BookController extends Controller
         $book->status_id = $request->status_id;
         $book->category_id = $request->category_id;
         $book->update();
-        
+
         return new BookResource($book);
     }
 
@@ -103,7 +108,7 @@ class BookController extends Controller
 
         $book = Book::find($book->id);
         $book->delete();
-        return  response()->json(['success' => 'book deleted successfully']);
+        return response()->json(['success' => 'book deleted successfully']);
 
     }
 }

@@ -17,21 +17,56 @@ class RolesAndPermissionsSeeder extends Seeder
         //
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // permissions for library member
 
+        $permissions = [
+            'list books',
+            'filter books',
+
+            'add book',
+            'edite book',
+            'delete book',
+
+
+            'list categories',
+
+            'add category',
+            'edite category',
+            'delete category',
+
+        ];
         // create permissions
-        Permission::create(['name' => 'list books']);
-        Permission::create(['name' => 'delete articles']);
-        
+        foreach ($permissions as $permission) {
+            Permission::create(['name' => $permission]);
+        }
 
-        // create roles and assign created permissions
+        // give permissions to member role
+        $role = Role::create(['name' => 'member'])
+            ->givePermissionTo(['list books', 'filter books']);
+        // give permission to librarian role
+        $role = Role::create(['name' => 'librarian'])
+            ->givePermissionTo([
+                'list books',
+                'filter books',
 
-        // this can be done as separate statements
-        $role = Role::create(['name' => 'member']);
-        $role->givePermissionTo('list books');
+                'add book',
+                'edite book',
+                'delete book'
+            ]);
+        // give permission to admin role    
+        $role = Role::create(['name' => 'admin'])
+            ->givePermissionTo([
+                'list books',
+                'filter books',
 
-        
+                'add book',
+                'edite book',
+                'delete book',
 
-        // $role = Role::create(['name' => 'super-admin']);
-        // $role->givePermissionTo(Permission::all());
-    }
+                'list categories',
+                'add category',
+                'edite category',
+                'delete category',
+            ]);
+}
 }
