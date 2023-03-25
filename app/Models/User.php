@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\URL;
@@ -11,10 +11,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Auth\Passwords\CanResetPassword;
 
-class User extends Authenticatable
+class User extends Authenticatable implements CanResetPasswordContract
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles,   CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -55,15 +57,23 @@ class User extends Authenticatable
     }
         public function sendConfirmationEmail()
     {
-        $this->confirmation_code = Str::random(30);
-        $this->save();
+        // $hashedString = hash('sha256', 'some_secret_string');
+        // $this->save();
 
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60),
-            ['id' => $this->id, 'hash' => sha1($this->confirmation_code)]
+            ['id' => $this->id, 'hash' => " hello"]
         );
 
         $this->notify(new VerifyEmail($verificationUrl));
     }
 }
+// $userId = 1;
+//         $hashedString = hash('sha256', 'some_secret_string');
+
+//         $verificationUrl = URL::temporarySignedRoute(
+//             'verification.verify',
+//             now()->addMinutes(60),
+//             ['id' => $userId, 'hash' => $hashedString]
+//         );

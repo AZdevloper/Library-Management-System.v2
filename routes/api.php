@@ -23,15 +23,15 @@ use Spatie\Permission\Middlewares\RoleMiddleware;
 //     return $request->user();
 // });
 
-Route::controller(App\Http\Controllers\AuthController::class)->group(function () {
-    Route::post('login', 'login');
-    Route::post('register', 'register');
-    Route::post('logout', 'logout')->middleware('auth:sanctum');
-    Route::post('forgot', 'forgot');
-    Route::put('reset/{token}', 'reset')->name('reset.password.post');
-    Route::get('/email/verify/{id}/{hash}', 'verify')
-    ->name('verification.verify');
-});
+    // Route::controller(App\Http\Controllers\AuthController::class)->group(function () {
+    //     Route::post('login', 'login');
+    //     Route::post('register', 'register');
+    //     Route::post('logout', 'logout')->middleware('auth:sanctum');
+    //     Route::post('forgot', 'forgot');
+    //     Route::put('reset/{token}', 'reset')->name('reset.password.post');
+    //     Route::get('/email/verify/{id}/{hash}', 'verify')
+    //     ->name('verification.verify');
+    // });
 // Route::controller(App\Http\Controllers\BookController::class)->group(function () {
 //     Route::post('books', 'index');
 
@@ -62,4 +62,8 @@ Route::controller(App\Http\Controllers\BookController::class)->group(function ()
     Route::put('category/{id}', 'update')->middleware(['auth:sanctum','role:admin']);
     Route::delete('category/{id}', 'delete')->middleware(['auth:sanctum','role:admin']);
 });
-Route::post('change/permetion/{id}',[AuthController::class,'changeRole'])->middleware(['auth:sanctum','role:admin']);
+Route::post('manage/roles',[AuthController::class,'manageRoles'])->middleware(['auth:sanctum','role:admin']);
+Route::post('manage/permissions', [AuthController::class, 'managePermissions']);
+// Route::post('/resetpassword',[AuthController::class,'sendResetLinkEmail']);
+// Route::post('manage/roles', [AuthController::class, 'manageRoles']);:
+

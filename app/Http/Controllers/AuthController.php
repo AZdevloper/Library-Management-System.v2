@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Mail\WelcomeMail;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -16,9 +17,6 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     //
-    public function sendConfirmationEmail(){
-
-    }
     public function login(Request $request){
         // return response()->json(['message'=>'ok']);
         $request->validate([
@@ -49,26 +47,20 @@ class AuthController extends Controller
     }
     public function register(Request $request)
     {
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'email' => 'required|email|unique:users,email',
-        //     'password' => 'required|min:8'
-        // ]);
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8'
+        ]);
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
         $user->assignRole('member');
-        // $mailData = [
-        //     'title' => 'Mail from ItSolutionStuff.com',
-        //     'body' => 'This is for testing email using smtp.'
-        // ];
-        // $user->sendConfirmationEmail();
-         
-        // Mail::to('your_email@gmail.com')->send(new WelcomeMail($mailData));
-        
         $user->save();
+
+        $user->sendConfirmationEmail();        
         return response()->json([
             'message' => 'User registered successfully. Please check your email for confirmation.',
             'user_id'=>$user->id
@@ -76,20 +68,28 @@ class AuthController extends Controller
 
 
     }
-    public function verify(Request $request)
+    public function verify(Request $request, $id, $hash)
     {
-        $user = User::findOrFail($request->id);
-    
-        if ($user->email_verified_at) {
-            return Response()->json([
-                'message'=> 'confirmed succsefully'
-             ]) ;
+        $user = User::findOrFail($id);
+
+        // Verify the signature hash to ensure the URL has not been tampered with
+        if (! URL::hasValidSignature($request)) {
+            abort(403, 'Invalid URL signature');
         }
-    
-        if ($user->markEmailAsVerified()) {
-            event(new Verified($user));
+
+        // Verify the hash parameter matches the expected value
+        $expectedHash = hash('sha256', 'some_secret_string');
+        if ($hash !== $expectedHash) {
+            abort(403, 'Invalid verification hash');
         }
-    
+
+        // Verify the user's email address
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        // Redirect the user to a success page
+        return redirect()->route('home')->with('success', 'Your email has been verified.');
     }
     public function logout(Request $request)
     {
@@ -98,11 +98,45 @@ class AuthController extends Controller
             'message' => 'User logged out successfully.'
         ], 200);
     }
-    public function changeRole(Request $request){
+    public function sendResetLinkEmail(Request $request)
+    {
+        $this->validate($request, ['email' => 'required|email']);
+
+        $response = $this->broker()->sendResetLink(
+            $request->only('email')
+        );
+
+        if ($response === Password::RESET_LINK_SENT) {
+            return back()->with('status', trans($response));
+        } else {
+            return back()->withErrors(
+                ['email' => trans($response)]
+            );
+        }
+    }
+
+    public function broker()
+    {
+        return Password::broker();
+    }
+ 
+    public function sendResetLink(Request $request)
+    {
+        $this->validate($request, ['email' => 'required|email']);
+    
+        $response = Password::sendResetLink($request->only('email'));
+    
+        if ($response === Password::RESET_LINK_SENT) {
+            return back()->with('status', trans($response));
+        } else {
+            return back()->withErrors(['email' => trans($response)]);
+        }
+    }
+       public function manageRoles(Request $request){
         $user = User::find($request->id);
-        $role = Role::where('name', $request->name)->first();
-        if ($user && $role) {
-            $user->syncRoles($role);
+        // $role = Role::where('name', $request->roleName)->first();
+        if ($user) {
+            $user->syncRoles($request->rolesName);
                      return response()->json([
                 'message' => " role changed  successfully for $user->name to $request->name."
             ], 200);
@@ -111,4 +145,9 @@ class AuthController extends Controller
         }
         
     }
+    public function managePermissions(Request $request){
+        $role = Role::where('name', $request->roleName)->first();
+        $role->syncPermissions($request->permissionsName);
+    }
+
 }

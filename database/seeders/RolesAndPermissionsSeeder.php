@@ -43,6 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // give permissions to member role
         $role = Role::create(['name' => 'member'])
             ->givePermissionTo(['list books', 'filter books']);
+            
         // give permission to librarian role
         $role = Role::create(['name' => 'librarian'])
             ->givePermissionTo([
