@@ -24,14 +24,14 @@ class RolesAndPermissionsSeeder extends Seeder
             'filter books',
 
             'add book',
-            'edite book',
+            'edit book',
             'delete book',
 
 
             'list categories',
 
             'add category',
-            'edite category',
+            'edit category',
             'delete category',
 
         ];
@@ -51,7 +51,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'filter books',
 
                 'add book',
-                'edite book',
+                'edit book',
                 'delete book'
             ]);
         // give permission to admin role    
@@ -61,12 +61,12 @@ class RolesAndPermissionsSeeder extends Seeder
                 'filter books',
 
                 'add book',
-                'edite book',
+                'edit book',
                 'delete book',
 
                 'list categories',
                 'add category',
-                'edite category',
+                'edit category',
                 'delete category',
             ]);
 }

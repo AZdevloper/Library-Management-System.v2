@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Category;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\BookResource;
+use App\Http\Resources\BookCollection;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
-use App\Http\Resources\BookCollection;
-use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
@@ -16,7 +18,7 @@ class BookController extends Controller
     public function index()
     {
         //
-        $books = Book::with('category', 'user', )->latest()->get();
+        $books = Book::with('category' )->get();
         return new BookCollection($books);
 
 
@@ -101,14 +103,25 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy($id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return new JsonResponse(['error' => 'Book not found'], 404);
+        }
+
+        $book->delete();
+
+        return new JsonResponse(['message' => 'Book deleted successfully'], 200);
+    }
+    public function filter( $category_id)
     {
         //
         // if ($book->user_id != 1 && Auth::user()->role->name != "admin") {
 
-        $book = Book::find($book->id);
-        $book->delete();
-        return response()->json(['success' => 'book deleted successfully']);
+        $books = Book::where("category_id",$category_id)->get();
 
+        return $books;
     }
 }

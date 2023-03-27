@@ -46,13 +46,13 @@ use Spatie\Permission\Middlewares\RoleMiddleware;
 
 // Route::controller(CategoryController::class)->group(function () {
 //     Route::get('category', 'index');
-// })->middleware(['permission:edite book','auth:sanctum']);
+// })->middleware(['permission:edit book','auth:sanctum']);
 Route::controller(App\Http\Controllers\BookController::class)->group(function () {
     Route::get('books', 'index')->middleware(['auth:sanctum','permission:list books']);
-    Route::get('books/{id}', 'show')->middleware(['auth:sanctum','permission:list books']);
+    Route::get('book/{id}', 'show')->middleware(['auth:sanctum','permission:list books']);
     Route::post('book', 'store')->middleware(['auth:sanctum','permission:add book']);
-    Route::put('books/{id}', 'update')->middleware(['auth:sanctum','permission:edite book']);
-    Route::delete('book/{id}', 'delete')->middleware(['auth:sanctum','permission:delete book']);
+    Route::put('books/{id}', 'update')->middleware(['auth:sanctum','permission:edit book']);
+    Route::delete('book/{id}', 'destroy')->middleware(['auth:sanctum','permission:delete book']);
     Route::get('book/category/{id}', 'filter')->middleware(['auth:sanctum','permission:filter books']);
 });
 Route::controller(App\Http\Controllers\BookController::class)->group(function () {
@@ -60,9 +60,9 @@ Route::controller(App\Http\Controllers\BookController::class)->group(function ()
     Route::get('category/{id}', 'show')->middleware(['auth:sanctum','permission:list books']);
     Route::post('category', 'store')->middleware(['auth:sanctum','role:admin']);
     Route::put('category/{id}', 'update')->middleware(['auth:sanctum','role:admin']);
-    Route::delete('category/{id}', 'delete')->middleware(['auth:sanctum','role:admin']);
+    Route::delete('category/{id}', 'destroy')->middleware(['auth:sanctum','role:admin']);
 });
-Route::post('manage/roles',[AuthController::class,'manageRoles'])->middleware(['auth:sanctum','role:admin']);
+Route::post('manage/roles',[AuthController::class,'manageRoles']);
 Route::post('manage/permissions', [AuthController::class, 'managePermissions']);
 // Route::post('/resetpassword',[AuthController::class,'sendResetLinkEmail']);
 // Route::post('manage/roles', [AuthController::class, 'manageRoles']);:

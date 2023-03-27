@@ -23,7 +23,8 @@ class BookResource extends JsonResource
             'pagesNumber' => $this->pagesNumber,
             'emplacement' => $this->emplacement,
             'user_id' => $this->user_id,
-            'category_id' => $this->category_id,
+            'category_id' =>
+            new CategoryResource($this->category),
             'status_id' => $this->status_id,
             'updated_at' => $this->updated_at,
         ];
